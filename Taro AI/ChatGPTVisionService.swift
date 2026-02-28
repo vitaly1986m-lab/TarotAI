@@ -23,28 +23,30 @@ final class ChatGPTVisionService {
 
         let body: [String: Any] = [
             "model": "gpt-4.1-mini",
-            "input": [
+            "messages": [
                 [
                     "role": "user",
                     "content": [
                         [
-                            "type": "input_text",
+                            "type": "text",
                             "text": prompt
                         ],
                         [
-                            "type": "input_image",
-                            "image_base64": base64Image
+                            "type": "image_url",
+                            "image_url": [
+                                "url": "data:image/jpeg;base64,\(base64Image)"
+                            ]
                         ]
                     ]
                 ]
             ],
-            "max_output_tokens": 600
+            "max_tokens": 600
         ]
     
 
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
-        request.setValue("Bearer YOUR_POLZA_API_KEY", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
