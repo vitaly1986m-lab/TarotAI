@@ -5,6 +5,8 @@ struct MainView: View {
 
     @State private var floating = false
     @State private var showCamera = false
+    @State private var showSourcePicker = false
+    @State private var showCameraCapture = false
     @State private var capturedImage: UIImage?
     @State private var detectedCards: [String] = []
     @State private var showDetail = false
@@ -188,7 +190,7 @@ struct MainView: View {
 
                         // Кнопка "Загрузить скриншот"
                         Button {
-                            showCamera = true
+                            showSourcePicker = true
                         } label: {
                             Text("Загрузить скриншот")
                                 .font(.headline)
@@ -222,8 +224,26 @@ struct MainView: View {
                         floating.toggle()
                     }
                 }
+            .confirmationDialog("Выберите источник", isPresented: $showSourcePicker, titleVisibility: .visible) {
+                Button("Камера") {
+                    showCameraCapture = true
+                }
+                Button("Фото из галереи") {
+                    showCamera = true
+                }
+                Button("Отмена", role: .cancel) {}
+            }
             .sheet(isPresented: $showCamera) {
                 ImagePickerFiles(image: $capturedImage)
+                    .onDisappear {
+                        if let image = capturedImage {
+                            detectTarotCards(from: image)
+                            showDetail = true
+                        }
+                    }
+            }
+            .sheet(isPresented: $showCameraCapture) {
+                CameraPicker(image: $capturedImage)
                     .onDisappear {
                         if let image = capturedImage {
                             detectTarotCards(from: image)
