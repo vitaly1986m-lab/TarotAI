@@ -5,7 +5,7 @@ struct SplashView: View {
 
     var body: some View {
         if isActive {
-            MainView()
+            AuthView()
         } else {
             ZStack {
                 Color.black
