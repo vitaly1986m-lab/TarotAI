@@ -41,17 +41,6 @@ struct AuthView: View {
 
                     Spacer()
 
-                    // Apple Sign In
-                    SignInWithAppleButton(.signIn) { request in
-                        request.requestedScopes = [.fullName, .email]
-                    } onCompletion: { result in
-                        authManager.handleAppleSignIn(result: result)
-                    }
-                    .signInWithAppleButtonStyle(.white)
-                    .frame(height: 56)
-                    .cornerRadius(28)
-                    .padding(.horizontal, 32)
-
                     // Google Sign In
                     Button {
                         guard let rootVC = UIApplication.shared.connectedScenes
@@ -60,9 +49,29 @@ struct AuthView: View {
                         authManager.signInWithGoogle(presenting: rootVC)
                     } label: {
                         HStack(spacing: 10) {
-                            Image(systemName: "g.circle.fill")
-                                .font(.title2)
+                            Image("google_logo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40, height: 40)
                             Text("Sign in with Google")
+                                .font(.system(size: 17, weight: .medium))
+                        }
+                        .foregroundColor(.black)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(Color.white)
+                        .cornerRadius(28)
+                    }
+                    .padding(.horizontal, 32)
+
+                    // Apple Sign In
+                    Button {
+                        authManager.startAppleSignIn()
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "apple.logo")
+                                .font(.system(size: 20, weight: .medium))
+                            Text("Sign in with Apple")
                                 .font(.system(size: 17, weight: .medium))
                         }
                         .foregroundColor(.black)
@@ -81,3 +90,6 @@ struct AuthView: View {
     }
 }
 
+#Preview {
+    MainView()
+}
