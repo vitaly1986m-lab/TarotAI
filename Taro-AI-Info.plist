@@ -17,5 +17,9 @@
 	</array>
 	<key>GIDClientID</key>
 	<string>219330184847-7p9hgk14dcmgph2rbfd83loi102m95uj.apps.googleusercontent.com</string>
+	<key>INIntentsSupported</key>
+	<array>
+		<string>Intent</string>
+	</array>
 </dict>
 </plist>

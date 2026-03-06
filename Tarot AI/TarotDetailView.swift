@@ -2,18 +2,12 @@ import SwiftUI
 
 struct TarotDetailView: View {
     let image: UIImage
-    let detectedCards: [TarotCard]
-    
+    var question: String = ""
+
     @State private var analysisText = "Анализируем расклад…"
-        @State private var isLoading = true
+    @State private var isLoading = true
 
-        private let visionService = ChatGPTVisionService()
-
-    struct TarotCard: Identifiable {
-        let id = UUID()
-        let name: String
-        let description: String
-    }
+    private let visionService = ChatGPTVisionService.shared
 
     var body: some View {
         ScrollView {
@@ -25,7 +19,13 @@ struct TarotDetailView: View {
                     .cornerRadius(16)
                     .shadow(radius: 8)
                     .padding()
-                
+
+                // Заголовок
+                Text("Обнаруженные карты")
+                    .font(.title2)
+                    .bold()
+                    .foregroundColor(.white)
+
                 if isLoading {
                     ProgressView()
                         .tint(.white)
@@ -34,47 +34,27 @@ struct TarotDetailView: View {
                         .foregroundColor(.white)
                         .padding()
                 }
-
-
-                // Заголовок
-                Text("Обнаруженные карты")
-                    .font(.title2)
-                    .bold()
-                    .foregroundColor(.white)
-
-                // Список карт с описанием
-                ForEach(detectedCards) { card in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(card.name)
-                            .font(.headline)
-                            .foregroundColor(.yellow)
-
-                        Text(card.description)
-                            .foregroundColor(.white.opacity(0.85))
-                            .font(.subheadline)
-                    }
-                    .padding()
-                    .background(Color.black.opacity(0.3))
-                    .cornerRadius(12)
-                }
-                
-                .onAppear {
+            }
+            .padding()
+            .onAppear {
                         visionService.analyzeTarot(image: image) { result in
                             DispatchQueue.main.async {
                                 isLoading = false
                                 switch result {
                                 case .success(let text):
                                     analysisText = text
+                                    let reading = TarotReading(
+                                        question: question.isEmpty ? "Без вопроса" : question,
+                                        cardsFound: String(text.prefix(100)),
+                                        interpretation: text
+                                    )
+                                    ReadingHistoryManager.shared.add(reading)
                                 case .failure:
                                     analysisText = "Не удалось проанализировать расклад."
                                 }
                             }
                         }
                     }
-
-                Spacer()
-            }
-            .padding()
         }
         .background(
             LinearGradient(

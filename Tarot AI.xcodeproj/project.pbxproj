@@ -7,18 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D802BF6D2F5799AB00E32FD8 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D802BF6C2F5799AB00E32FD8 /* FirebaseAuth */; };
+		D802BF6F2F5799BE00E32FD8 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D802BF6E2F5799BE00E32FD8 /* FirebaseFirestore */; };
+		D802BF712F5799CF00E32FD8 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = D802BF702F5799CF00E32FD8 /* FirebaseRemoteConfig */; };
 		D8DDA6BE2F5377B400384FF0 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D8DDA6BD2F5377B400384FF0 /* GoogleSignIn */; };
 		D8DDA6C02F5377B400384FF0 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D8DDA6BF2F5377B400384FF0 /* GoogleSignInSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D83E73442EEDD50200C92ECE /* Taro AI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Taro AI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D83E73442EEDD50200C92ECE /* Tarot AI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tarot AI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		D83E73462EEDD50200C92ECE /* Taro AI */ = {
+		D83E73462EEDD50200C92ECE /* Tarot AI */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Taro AI";
+			path = "Tarot AI";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -29,17 +32,28 @@
 			buildActionMask = 2147483647;
 			files = (
 				D8DDA6BE2F5377B400384FF0 /* GoogleSignIn in Frameworks */,
+				D802BF6F2F5799BE00E32FD8 /* FirebaseFirestore in Frameworks */,
+				D802BF6D2F5799AB00E32FD8 /* FirebaseAuth in Frameworks */,
 				D8DDA6C02F5377B400384FF0 /* GoogleSignInSwift in Frameworks */,
+				D802BF712F5799CF00E32FD8 /* FirebaseRemoteConfig in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D802BF6B2F5799AB00E32FD8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D83E733B2EEDD50200C92ECE = {
 			isa = PBXGroup;
 			children = (
-				D83E73462EEDD50200C92ECE /* Taro AI */,
+				D83E73462EEDD50200C92ECE /* Tarot AI */,
+				D802BF6B2F5799AB00E32FD8 /* Frameworks */,
 				D83E73452EEDD50200C92ECE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -47,7 +61,7 @@
 		D83E73452EEDD50200C92ECE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D83E73442EEDD50200C92ECE /* Taro AI.app */,
+				D83E73442EEDD50200C92ECE /* Tarot AI.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -55,9 +69,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D83E73432EEDD50200C92ECE /* Taro AI */ = {
+		D83E73432EEDD50200C92ECE /* Tarot AI */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D83E73522EEDD50500C92ECE /* Build configuration list for PBXNativeTarget "Taro AI" */;
+			buildConfigurationList = D83E73522EEDD50500C92ECE /* Build configuration list for PBXNativeTarget "Tarot AI" */;
 			buildPhases = (
 				D83E73402EEDD50200C92ECE /* Sources */,
 				D83E73412EEDD50200C92ECE /* Frameworks */,
@@ -68,15 +82,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				D83E73462EEDD50200C92ECE /* Taro AI */,
+				D83E73462EEDD50200C92ECE /* Tarot AI */,
 			);
-			name = "Taro AI";
+			name = "Tarot AI";
 			packageProductDependencies = (
 				D8DDA6BD2F5377B400384FF0 /* GoogleSignIn */,
 				D8DDA6BF2F5377B400384FF0 /* GoogleSignInSwift */,
+				D802BF6C2F5799AB00E32FD8 /* FirebaseAuth */,
+				D802BF6E2F5799BE00E32FD8 /* FirebaseFirestore */,
+				D802BF702F5799CF00E32FD8 /* FirebaseRemoteConfig */,
 			);
 			productName = "Taro AI";
-			productReference = D83E73442EEDD50200C92ECE /* Taro AI.app */;
+			productReference = D83E73442EEDD50200C92ECE /* Tarot AI.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -94,7 +111,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D83E733F2EEDD50200C92ECE /* Build configuration list for PBXProject "Taro AI" */;
+			buildConfigurationList = D83E733F2EEDD50200C92ECE /* Build configuration list for PBXProject "Tarot AI" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -105,13 +122,14 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				D8DDA6BC2F5377B400384FF0 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				D802BF6A2F5793E000E32FD8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D83E73452EEDD50200C92ECE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D83E73432EEDD50200C92ECE /* Taro AI */,
+				D83E73432EEDD50200C92ECE /* Tarot AI */,
 			);
 		};
 /* End PBXProject section */
@@ -267,7 +285,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Taro AI/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Tarot AI/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Taro-AI-Info.plist";
@@ -298,7 +316,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Taro AI/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Tarot AI/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Taro-AI-Info.plist";
@@ -325,7 +343,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D83E733F2EEDD50200C92ECE /* Build configuration list for PBXProject "Taro AI" */ = {
+		D83E733F2EEDD50200C92ECE /* Build configuration list for PBXProject "Tarot AI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D83E73502EEDD50500C92ECE /* Debug */,
@@ -334,7 +352,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D83E73522EEDD50500C92ECE /* Build configuration list for PBXNativeTarget "Taro AI" */ = {
+		D83E73522EEDD50500C92ECE /* Build configuration list for PBXNativeTarget "Tarot AI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D83E73532EEDD50500C92ECE /* Debug */,
@@ -346,6 +364,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D802BF6A2F5793E000E32FD8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.10.0;
+			};
+		};
 		D8DDA6BC2F5377B400384FF0 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -357,6 +383,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D802BF6C2F5799AB00E32FD8 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D802BF6A2F5793E000E32FD8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		D802BF6E2F5799BE00E32FD8 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D802BF6A2F5793E000E32FD8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		D802BF702F5799CF00E32FD8 /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D802BF6A2F5793E000E32FD8 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
+		};
 		D8DDA6BD2F5377B400384FF0 /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D8DDA6BC2F5377B400384FF0 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;

@@ -1,67 +1,153 @@
 import SwiftUI
-import AuthenticationServices
+import FirebaseAuth
 import GoogleSignIn
+import FirebaseCore
 
-class AuthManager: NSObject, ObservableObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
-    @AppStorage("isLoggedIn") var isLoggedIn = false
+class AuthManager: ObservableObject {
+    @Published var isLoggedIn = false
+    @Published var currentUser: FirebaseAuth.User?
+    @Published var email = ""
+    @Published var password = ""
+    @Published var isRegistering = false
+    @Published var errorMessage = ""
+    @Published var isLoading = false
 
-    // MARK: - Apple Sign In
+    private var authStateHandle: AuthStateDidChangeListenerHandle?
 
-    func startAppleSignIn() {
-        let provider = ASAuthorizationAppleIDProvider()
-        let request = provider.createRequest()
-        request.requestedScopes = [.fullName, .email]
-        let controller = ASAuthorizationController(authorizationRequests: [request])
-        controller.delegate = self
-        controller.presentationContextProvider = self
-        controller.performRequests()
-    }
-
-    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = scene.windows.first else {
-            return UIWindow()
-        }
-        return window
-    }
-
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        if let credential = authorization.credential as? ASAuthorizationAppleIDCredential {
-            let userId = credential.user
-            UserDefaults.standard.set(userId, forKey: "appleUserId")
-            isLoggedIn = true
-        }
-    }
-
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        print("Apple Sign In failed: \(error.localizedDescription)")
-    }
-
-    func handleAppleSignIn(result: Result<ASAuthorization, Error>) {
-        switch result {
-        case .success(let authorization):
-            if let credential = authorization.credential as? ASAuthorizationAppleIDCredential {
-                let userId = credential.user
-                UserDefaults.standard.set(userId, forKey: "appleUserId")
-                isLoggedIn = true
+    init() {
+        authStateHandle = Auth.auth().addStateDidChangeListener { [weak self] _, user in
+            DispatchQueue.main.async {
+                self?.currentUser = user
+                self?.isLoggedIn = user != nil
+                if user != nil {
+                    ReadingHistoryManager.shared.startListening()
+                    MigrationManager.migrateIfNeeded()
+                } else {
+                    ReadingHistoryManager.shared.stopListening()
+                }
             }
-        case .failure(let error):
-            print("Apple Sign In failed: \(error.localizedDescription)")
         }
+    }
+
+    deinit {
+        if let handle = authStateHandle {
+            Auth.auth().removeStateDidChangeListener(handle)
+        }
+    }
+
+    // MARK: - Email Sign In / Register
+
+    func signInWithEmail() {
+        guard isValidEmail(email) else {
+            errorMessage = "Введите корректный email"
+            return
+        }
+        guard password.count >= 6 else {
+            errorMessage = "Пароль должен быть не менее 6 символов"
+            return
+        }
+        errorMessage = ""
+        isLoading = true
+
+        if isRegistering {
+            Auth.auth().createUser(withEmail: email, password: password) { [weak self] _, error in
+                DispatchQueue.main.async {
+                    self?.isLoading = false
+                    if let error = error {
+                        self?.errorMessage = self?.mapFirebaseError(error) ?? error.localizedDescription
+                    }
+                }
+            }
+        } else {
+            Auth.auth().signIn(withEmail: email, password: password) { [weak self] _, error in
+                DispatchQueue.main.async {
+                    self?.isLoading = false
+                    if let error = error {
+                        self?.errorMessage = self?.mapFirebaseError(error) ?? error.localizedDescription
+                    }
+                }
+            }
+        }
+    }
+
+    private func isValidEmail(_ email: String) -> Bool {
+        let pattern = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        return email.range(of: pattern, options: .regularExpression) != nil
     }
 
     // MARK: - Google Sign In
 
     func signInWithGoogle(presenting viewController: UIViewController) {
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            errorMessage = "Ошибка конфигурации: CLIENT_ID не найден в GoogleService-Info.plist"
+            return
+        }
+
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+
+        isLoading = true
+
         GIDSignIn.sharedInstance.signIn(withPresenting: viewController) { [weak self] result, error in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+            }
+
             if let error = error {
-                print("Google Sign In failed: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self?.errorMessage = error.localizedDescription
+                }
                 return
             }
-            guard result?.user != nil else { return }
-            DispatchQueue.main.async {
-                self?.isLoggedIn = true
+
+            guard let user = result?.user,
+                  let idToken = user.idToken?.tokenString else { return }
+
+            let credential = GoogleAuthProvider.credential(
+                withIDToken: idToken,
+                accessToken: user.accessToken.tokenString
+            )
+
+            Auth.auth().signIn(with: credential) { [weak self] _, error in
+                DispatchQueue.main.async {
+                    self?.isLoading = false
+                    if let error = error {
+                        self?.errorMessage = self?.mapFirebaseError(error) ?? error.localizedDescription
+                    }
+                }
             }
+        }
+    }
+
+    // MARK: - Sign Out
+
+    func signOut() {
+        ReadingHistoryManager.shared.stopListening()
+        GIDSignIn.sharedInstance.signOut()
+        try? Auth.auth().signOut()
+    }
+
+    // MARK: - Error Mapping
+
+    private func mapFirebaseError(_ error: Error) -> String {
+        let code = (error as NSError).code
+        switch code {
+        case AuthErrorCode.emailAlreadyInUse.rawValue:
+            return "Этот email уже зарегистрирован"
+        case AuthErrorCode.wrongPassword.rawValue:
+            return "Неверный пароль"
+        case AuthErrorCode.userNotFound.rawValue:
+            return "Пользователь не найден"
+        case AuthErrorCode.invalidEmail.rawValue:
+            return "Некорректный email"
+        case AuthErrorCode.weakPassword.rawValue:
+            return "Пароль слишком слабый"
+        case AuthErrorCode.networkError.rawValue:
+            return "Ошибка сети. Проверьте подключение"
+        case AuthErrorCode.tooManyRequests.rawValue:
+            return "Слишком много попыток. Попробуйте позже"
+        default:
+            return error.localizedDescription
         }
     }
 }

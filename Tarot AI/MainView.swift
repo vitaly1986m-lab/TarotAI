@@ -2,14 +2,15 @@ import SwiftUI
 import UIKit
 
 struct MainView: View {
+    @EnvironmentObject var authManager: AuthManager
 
     @State private var floating = false
     @State private var showCamera = false
     @State private var showSourcePicker = false
     @State private var showCameraCapture = false
     @State private var capturedImage: UIImage?
-    @State private var detectedCards: [String] = []
     @State private var showDetail = false
+    @State private var showSettings = false
 
     // Вопрос пользователя
     @State private var showQuestionField = false
@@ -219,6 +220,9 @@ struct MainView: View {
                     // Показываем описание первой карты сразу при запуске экрана
                     selectCard(index: 0)
 
+                    // Запускаем слушатель Firestore
+                    ReadingHistoryManager.shared.startListening()
+
                     // Сохраняем плавающую анимацию
                     withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
                         floating.toggle()
@@ -236,8 +240,7 @@ struct MainView: View {
             .sheet(isPresented: $showCamera) {
                 ImagePickerFiles(image: $capturedImage)
                     .onDisappear {
-                        if let image = capturedImage {
-                            detectTarotCards(from: image)
+                        if capturedImage != nil {
                             showDetail = true
                         }
                     }
@@ -245,8 +248,7 @@ struct MainView: View {
             .sheet(isPresented: $showCameraCapture) {
                 CameraPicker(image: $capturedImage)
                     .onDisappear {
-                        if let image = capturedImage {
-                            detectTarotCards(from: image)
+                        if capturedImage != nil {
                             showDetail = true
                         }
                     }
@@ -255,10 +257,7 @@ struct MainView: View {
             
             .navigationDestination(isPresented: $showDetail) {
                 if let image = capturedImage {
-                    TarotDetailView(
-                        image: image,
-                        detectedCards: detectedCards.map { TarotDetailView.TarotCard(name: $0, description: "Описание карты \($0)") }
-                    )
+                    TarotDetailView(image: image, question: tarotQuestion)
                 }
             }
         }
@@ -270,14 +269,6 @@ struct MainView: View {
         
     }
 
-    func detectTarotCards(from image: UIImage) {
-        detectedCards = [
-            "The Fool",
-            "The Magician",
-            "The High Priestess"
-        ]
-    }
-    
     func generateChatImage(text: String) -> UIImage {
         let controller = UIHostingController(rootView:
             ZStack {
@@ -319,9 +310,11 @@ extension MainView {
             
             Spacer()
             
-            Image(systemName: "gearshape.fill")
-                .foregroundColor(.gray)
-                .font(.title2)
+            NavigationLink(destination: SettingsView()) {
+                Image(systemName: "gearshape.fill")
+                    .foregroundColor(.gray)
+                    .font(.title2)
+            }
         }
         .padding(.horizontal)
     }
